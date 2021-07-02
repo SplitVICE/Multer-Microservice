@@ -1,0 +1,4 @@
+node_modules/
+settings.json
+src/public/*
+.env
