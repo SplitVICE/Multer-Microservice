@@ -15,23 +15,13 @@ Go to `/src/views/index.html` to see usage examples on client JavaScript and HTM
 Files will be uploaded at `/src/public/`. You would be able to se files by going to `localhost:<port>/yourUploadedFile.png`
 
 # Environment variables
-At project root `.env.template` file is located. Create `.env` file on project root or rename `.env.template` file to `.env` to set application settings.
+Create file called `.env` in project root. Use `.env.template` file to have a template for `.env` file.
 
-`GENERATE_RANDOM_NAMES_ON_UPLOADED_FILES`. Expected value: `TRUE` or `FALSE`.
+| Environment variable  | Description                                             | Example  |
+| --------------------- | ------------------------------------------------------- | -------- |
+| PORT                  | Application port                                        | 3000     |
+| FILE_SIZE_LIMIT       | Permited file size limite expressed in bytes            | 30000000 |
+| GENERATE_RANDOM_NAMES | Name uploaded files with uuid module. Defaults to false | true     |
 
-Will store files in file system with a custom name generated with nanoid package.
-
-`PORT`. Expected value: `Number`.
-
-Sets port where application will operate.
-
-`FILE_SIZE_LIMIT`. Expected value: `Number`.
-
-Sets file size limit expressed in bytes. Example: `30000000` to set file size limit of 30MB.
-
-If environment variables not set, project will run at default settings:
-
-Port: 1500, file size limit: 30MB, generate random names: true.
-
-### Need user interface?
-Try my other project <a href="https://github.com/splitvice/bit-frisbee" target="_blank">Bit Frisbee</a>
+### Application of mine that uses this template:
+<a href="https://github.com/splitvice/bit-frisbee" target="_blank">Bit Frisbee</a>

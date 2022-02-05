@@ -2,43 +2,50 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const fileExtension = require('file-extension');
-const { nanoid } = require('nanoid');
+const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const router = express.Router();
 
 // ===============================================================================================
-// SERVER SETTINGS
+// Server settings.
 // ===============================================================================================
 app.set('port', process.env.PORT || 1500)
 
-// PUBLIC FOLDER CREATION
+// Public folder creation.
 if (!fs.existsSync(path.join(__dirname, 'public/')))
     fs.mkdirSync(path.join(__dirname, 'public/'));
 
 // ===============================================================================================
 
-// MIDDLEWARES
-app.use(express.static(path.join(__dirname, 'public')))
-app.use(function (req, res, next) { // Accepts API requests from selected domains - cors
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    next()
-});
+// Middlewares.
+app.use(express.static(path.join(__dirname, 'public'))) // Public files folder. Where uploads land.
+app.use(cors()); // Accepts API requests from all domains.
 
-// ============================================================================================
-// MULTER SETTINGS
-// ============================================================================================
+// ===============================================================================================
+// Multer settings.
+// ===============================================================================================
+// Validation for random generated names or not.
+const generateRandomNames = (() => {
+    if (process.env.GENERATE_RANDOM_NAMES) {
+        return process.env.GENERATE_RANDOM_NAMES.toLocaleLowerCase() == 'true'
+            ? true
+            : false;
+    }
+    return false;
+})();
+console.log(generateRandomNames);
 const multer_storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, 'public'))
     },
     filename: (req, file, cb) => {
         cb(null, (() => {
-            return process.env.GENERATE_RANDOM_NAMES_ON_UPLOADED_FILES.toLowerCase() == 'true' || true
-                ? nanoid(7) + '.' + fileExtension(file.originalname)
+            return generateRandomNames === true
+                ? uuidv4() + '.' + fileExtension(file.originalname)
                 : file.originalname
         })())
     },
@@ -46,7 +53,7 @@ const multer_storage = multer.diskStorage({
 
 const upload = multer({
     storage: multer_storage,
-    limits: { fileSize: process.env.FILE_SIZE_LIMIT || 30000000 } // 30MB file limit
+    limits: { fileSize: process.env.FILE_SIZE_LIMIT || 30000000 } // 30MB file limit - Expressed in bytes.
 });
 // ============================================================================================
 
